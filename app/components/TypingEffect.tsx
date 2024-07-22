@@ -1,6 +1,4 @@
-"use client";
 import React, { useState, useEffect } from "react";
-import { text } from "stream/consumers";
 
 interface TypingEffectProps {
   text: string;
@@ -8,8 +6,6 @@ interface TypingEffectProps {
 }
 
 const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50 }) => {
-  console.log("effect", text);
-
   const [currentText, setCurrentText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
