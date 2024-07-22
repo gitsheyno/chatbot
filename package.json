@@ -9,7 +9,7 @@
     "lint": "next lint",
     "format": "prettier --write \"app/**/*.{js,jsx,ts,tsx}\"",
     "format:check": "prettier --check \"app/**/*.{js,jsx,ts,tsx}\"",
-    "postinstall": "patch-package" 
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "next": "14.2.5",
