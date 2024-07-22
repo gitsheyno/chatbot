@@ -41,10 +41,17 @@ export const sendMessage = async (formData: FormData) => {
 
   try {
     const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const result = await response.json();
-
     return result.result;
-  } catch (error) {
-    console.error(error);
+  } catch (error : any ) {
+    console.error('Error during API request:', {
+      message: error.message,
+      stack: error.stack,
+      options,
+    });
+    throw error;
   }
 };
