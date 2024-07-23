@@ -29,7 +29,6 @@ export default function Content() {
       type: "file",
       text: url as string,
     };
-    console.log(data, "pdf");
 
     if (pdf.name.length) {
       const f: Message = {
