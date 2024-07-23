@@ -1,7 +1,7 @@
 "use server";
 import { PDFReader } from "./PDFReader";
 
-export const maxDuration = 60;
+// export  const  maxDuration = 60;
 export const sendMessage = async (formData: FormData) => {
   const text = formData.get("text") as string;
   const type = formData.get("type") as string;
