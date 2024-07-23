@@ -1,7 +1,8 @@
 "use server";
 import { PDFReader } from "./PDFReader";
+import {insertIntoHistory } from "../seed/seedDB"
+import { revalidatePath } from "next/cache";
 
-// export  const  maxDuration = 60;
 export const sendMessage = async (formData: FormData) => {
   const data = formData.get("text") as string;
   const type = formData.get("type") as string;
@@ -18,6 +19,8 @@ export const sendMessage = async (formData: FormData) => {
   } else if (data) {
     content = data;
   }
+  // Insert the initial message into history
+  await insertIntoHistory(type, content);
 
   const url = "https://chatgpt-42.p.rapidapi.com/conversationgpt4-2";
   const options = {
@@ -49,6 +52,13 @@ export const sendMessage = async (formData: FormData) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const result = await response.json();
+
+ // Insert the AI response into history
+ await insertIntoHistory('ai', result.result);
+    console.log("send req")
+
+  revalidatePath('/');
+
     return result.result;
   } catch (error: any) {
     console.error("Error during API request:", {
@@ -58,4 +68,5 @@ export const sendMessage = async (formData: FormData) => {
     });
     throw error;
   }
+
 };

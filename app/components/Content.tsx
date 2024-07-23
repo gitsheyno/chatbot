@@ -6,53 +6,56 @@ import TypingEffect from "./TypingEffect";
 import { useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
 
+
+
 interface Message {
   type: string;
-  text: string;
+  content: string;
 }
 
 type M = string;
 
-export default function Content() {
+export default function Content({ctx} : {ctx : Message[]}) {
+
+  console.log(ctx,"ctx")
   const inputRef = useRef<HTMLInputElement>(null);
   const inputRefFile = useRef<HTMLInputElement>(null);
   const [history, setHistory] = useState<M[]>([]);
   const [file, setFile] = useState<File>();
   const [url, setURL] = useState<string>();
-  const [test, setTest] = useState<Message[]>([]);
-
+  const [test, setTest] = useState<Message[]>(ctx);
   const handleSubmit = async (formData: FormData) => {
     const data = formData.get("text") as string;
     const pdf = formData.get("file") as File;
 
     const f: Message = {
       type: "file",
-      text: url as string,
+      content: url as string,
     };
 
     if (pdf.name.length && data.length > 0) {
       const f: Message = {
         type: "file",
-        text: url as string,
+        content: url as string,
       };
 
       const d: Message = {
         type: "user",
-        text: data,
+        content: data,
       };
 
       setTest((prev) => [...prev, f, d]);
     } else if (pdf.name.length) {
       const f: Message = {
         type: "file",
-        text: url as string,
+        content: url as string,
       };
       setTest((prev) => [...prev, f]);
       formData.append("type", f.type);
     } else if (data) {
       const d: Message = {
         type: "user",
-        text: data,
+        content: data,
       };
       formData.append("type", d.type);
 
@@ -63,7 +66,7 @@ export default function Content() {
 
     const a: Message = {
       type: "ai",
-      text: answer,
+      content: answer,
     };
     setTest((prev) => [...prev, a]);
 
@@ -99,14 +102,14 @@ export default function Content() {
           <>
             <div>
               {test.map((item, index) => {
-                const { type, text } = item;
+                const { type, content } = item;
 
                 console.log(type);
                 if (type === "file") {
                   return (
                     <iframe
                       key={index}
-                      src={text}
+                      src={content}
                       width="100"
                       height="200"
                       title="PDF Viewer"
@@ -118,7 +121,7 @@ export default function Content() {
                       key={index}
                       className="bg-yellow-200  text-gray-700 p-4 rounded-md mb-2 text-sm"
                     >
-                      <TypingEffect text={text} />
+                      <TypingEffect text={content} />
                       {/* {text} */}
                     </div>
                   );
@@ -128,7 +131,7 @@ export default function Content() {
                       key={index}
                       className={`${"bg-gray-700 text-white"} p-4 rounded-md mb-2 text-sm`}
                     >
-                      <TypingEffect text={text} />
+                      <TypingEffect text={content} />
                     </div>
                   );
                 }
