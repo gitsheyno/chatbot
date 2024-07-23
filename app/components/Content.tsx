@@ -1,9 +1,11 @@
 "use client";
+
 import { sendMessage } from "../actions/sendMessage";
 import { useFormStatus } from "react-dom";
 import TypingEffect from "./TypingEffect";
 import { useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
+export const maxDuration = 60;
 
 interface Message {
   type: string;
