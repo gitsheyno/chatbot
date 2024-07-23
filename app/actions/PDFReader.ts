@@ -13,5 +13,3 @@ export const PDFReader = async (formData: FormData) => {
 
   return string;
 };
-
-

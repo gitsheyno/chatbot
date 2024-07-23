@@ -1,5 +1,5 @@
-import Image from "next/image";
-export const maxDuration = 60; 
+export const maxDuration = 60;
+
 import Main from "./components/Main";
 export default function Home() {
   return (

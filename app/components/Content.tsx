@@ -5,7 +5,6 @@ import { useFormStatus } from "react-dom";
 import TypingEffect from "./TypingEffect";
 import { useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
-export const maxDuration = 60;
 
 interface Message {
   type: string;
@@ -17,7 +16,6 @@ type M = string;
 export default function Content() {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputRefFile = useRef<HTMLInputElement>(null);
-  const { pending } = useFormStatus();
   const [history, setHistory] = useState<M[]>([]);
   const [file, setFile] = useState<File>();
   const [url, setURL] = useState<string>();
@@ -32,16 +30,26 @@ export default function Content() {
       text: url as string,
     };
 
-    if (pdf.name.length) {
+    if (pdf.name.length && data.length > 0) {
+      const f: Message = {
+        type: "file",
+        text: url as string,
+      };
+
+      const d: Message = {
+        type: "user",
+        text: data,
+      };
+
+      setTest((prev) => [...prev, f, d]);
+    } else if (pdf.name.length) {
       const f: Message = {
         type: "file",
         text: url as string,
       };
       setTest((prev) => [...prev, f]);
       formData.append("type", f.type);
-
     } else if (data) {
-      
       const d: Message = {
         type: "user",
         text: data,
@@ -108,11 +116,7 @@ export default function Content() {
                   return (
                     <div
                       key={index}
-                      className={`${
-                        index % 2 === 0
-                          ? "bg-yellow-200"
-                          : "bg-gray-700 text-white"
-                      } p-4 rounded-md mb-2 text-sm`}
+                      className="bg-yellow-200  text-gray-700 p-4 rounded-md mb-2 text-sm"
                     >
                       <TypingEffect text={text} />
                       {/* {text} */}

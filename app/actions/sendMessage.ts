@@ -3,16 +3,20 @@ import { PDFReader } from "./PDFReader";
 
 // export  const  maxDuration = 60;
 export const sendMessage = async (formData: FormData) => {
-  const text = formData.get("text") as string;
+  const data = formData.get("text") as string;
   const type = formData.get("type") as string;
-  const file = formData.get("file") as File;
+  const pdf = formData.get("file") as File;
 
   let content = "";
 
-  if (type === "user") {
-    content = text;
-  } else if (type === "file") {
+  console.log(pdf.size > 0, "pdf name");
+
+  if (pdf.size > 0 && data.length > 0) {
+    content = `${data} ${await PDFReader(formData)}`;
+  } else if (pdf.size > 0) {
     content = await PDFReader(formData);
+  } else if (data) {
+    content = data;
   }
 
   const url = "https://chatgpt-42.p.rapidapi.com/conversationgpt4-2";
@@ -46,8 +50,8 @@ export const sendMessage = async (formData: FormData) => {
     }
     const result = await response.json();
     return result.result;
-  } catch (error : any ) {
-    console.error('Error during API request:', {
+  } catch (error: any) {
+    console.error("Error during API request:", {
       message: error.message,
       stack: error.stack,
       options,
