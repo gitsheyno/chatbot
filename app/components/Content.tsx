@@ -1,11 +1,9 @@
 "use client";
 
 import { sendMessage } from "../actions/sendMessage";
-import { useFormStatus } from "react-dom";
 import TypingEffect from "./TypingEffect";
 import { useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
-
 
 
 interface Message {
@@ -13,62 +11,64 @@ interface Message {
   content: string;
 }
 
-type M = string;
-
 export default function Content({ctx} : {ctx : Message[]}) {
 
-  console.log(ctx,"ctx")
   const inputRef = useRef<HTMLInputElement>(null);
   const inputRefFile = useRef<HTMLInputElement>(null);
-  const [history, setHistory] = useState<M[]>([]);
   const [file, setFile] = useState<File>();
   const [url, setURL] = useState<string>();
-  const [test, setTest] = useState<Message[]>(ctx);
+  const [history, setHistory] = useState<Message[]>(ctx);
+  const[error,setError] = useState(false)
   const handleSubmit = async (formData: FormData) => {
     const data = formData.get("text") as string;
     const pdf = formData.get("file") as File;
 
-    const f: Message = {
-      type: "file",
-      content: url as string,
-    };
+
+    if(!inputRef.current?.value && !inputRefFile.current?.value){
+      setError(true)
+      return
+    }
+    else if(inputRef.current?.value || inputRefFile.current?.value){
+      setError(false)
+    }
+
 
     if (pdf.name.length && data.length > 0) {
-      const f: Message = {
+      const file: Message = {
         type: "file",
         content: url as string,
       };
 
-      const d: Message = {
+      const text: Message = {
         type: "user",
         content: data,
       };
 
-      setTest((prev) => [...prev, f, d]);
+      setHistory((prev) => [...prev, file, text]);
     } else if (pdf.name.length) {
-      const f: Message = {
+      const file: Message = {
         type: "file",
         content: url as string,
       };
-      setTest((prev) => [...prev, f]);
-      formData.append("type", f.type);
+      setHistory((prev) => [...prev, file]);
+      formData.append("type", file.type);
     } else if (data) {
-      const d: Message = {
+      const text: Message = {
         type: "user",
         content: data,
       };
-      formData.append("type", d.type);
+      formData.append("type", text.type);
 
-      setTest((prev) => [...prev, d]);
+      setHistory((prev) => [...prev, text]);
     }
 
     const answer = await sendMessage(formData);
 
-    const a: Message = {
+    const ai: Message = {
       type: "ai",
       content: answer,
     };
-    setTest((prev) => [...prev, a]);
+    setHistory((prev) => [...prev, ai]);
 
     if (inputRef.current) {
       inputRef.current.value = "";
@@ -79,8 +79,10 @@ export default function Content({ctx} : {ctx : Message[]}) {
     }
   };
 
+
+
   const handler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]; // Get the first selected file
+    const selectedFile = e.target.files?.[0]; 
 
     setFile(selectedFile);
 
@@ -99,12 +101,12 @@ export default function Content({ctx} : {ctx : Message[]}) {
     <div className="flex-1 flex  flex-col items-center justify-between rounded-lg p-3 gap-3 bg-white">
       <div className="flex-1  w-full px-4 rounded-md overflow-y-scroll">
         <div className="max-w-2xl mx-auto ">
+          {history.length !== 0 ? 
           <>
-            <div>
-              {test.map((item, index) => {
+            <div data-testid = "ai">
+              {history.map((item, index) => {
                 const { type, content } = item;
 
-                console.log(type);
                 if (type === "file") {
                   return (
                     <iframe
@@ -121,8 +123,10 @@ export default function Content({ctx} : {ctx : Message[]}) {
                       key={index}
                       className="bg-yellow-200  text-gray-700 p-4 rounded-md mb-2 text-sm"
                     >
+                      <h2 className="font-bold">🤷🏼‍♂️</h2>
+                      <br/>
                       <TypingEffect text={content} />
-                      {/* {text} */}
+                      {/* {content} */}
                     </div>
                   );
                 } else if (type === "ai") {
@@ -131,13 +135,19 @@ export default function Content({ctx} : {ctx : Message[]}) {
                       key={index}
                       className={`${"bg-gray-700 text-white"} p-4 rounded-md mb-2 text-sm`}
                     >
+                      <h2 className="font-bold">🤖</h2>
+                      <br/>
                       <TypingEffect text={content} />
+                      {/* {content} */}
                     </div>
                   );
                 }
               })}
             </div>
           </>
+           : 
+           <div className="w-full text-center text-gray-300  mx-auto">start you conversation by entering a prompt or uploading a file</div>
+            }
         </div>
       </div>
       <div className=" h-16 w-full ">
@@ -165,16 +175,8 @@ export default function Content({ctx} : {ctx : Message[]}) {
             onChange={handler}
             accept="application/pdf"
           />
-          {/* {url && file && (
-            <iframe
-              className="absolute  bottom-full left-1"
-              src={url}
-              width="100"
-              height="100"
-              title="PDF Viewer"
-            ></iframe>
-          )} */}
-          <SubmitButton />
+          <SubmitButton/>
+        {error ? <p className="absolute top-full left-1 text-red-700 text-sm">* input data</p> : ""}
         </form>
       </div>
     </div>

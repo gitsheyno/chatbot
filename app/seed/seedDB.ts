@@ -1,9 +1,9 @@
-import { db } from '@vercel/postgres';
+import { db } from "@vercel/postgres";
 
 interface Message {
-    type: string;
-    content: string;
-  }
+  type: string;
+  content: string;
+}
 
 async function getClient() {
   const client = await db.connect();
@@ -25,16 +25,12 @@ export async function insertIntoHistory(type: string, content: string) {
 }
 
 export async function fetchHistory() {
-    try {
+  try {
+    const data = await db<Message>`SELECT * FROM history`;
 
-  
-      const data = await db<Message>`SELECT * FROM history`;
-        console.log(data.rows,"da")
-      // console.log('Data fetch completed after 3 seconds.');
-  
-      return data.rows;
-    } catch (error) {
-      console.error('Database Error:', error);
-      throw new Error('Failed to fetch revenue data.');
-    }
+    return data.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch revenue data.");
   }
+}

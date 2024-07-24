@@ -1,6 +1,6 @@
 "use server";
 import { PDFReader } from "./PDFReader";
-import {insertIntoHistory } from "../seed/seedDB"
+import { insertIntoHistory } from "../seed/seedDB";
 import { revalidatePath } from "next/cache";
 
 export const sendMessage = async (formData: FormData) => {
@@ -9,8 +9,6 @@ export const sendMessage = async (formData: FormData) => {
   const pdf = formData.get("file") as File;
 
   let content = "";
-
-  console.log(pdf.size > 0, "pdf name");
 
   if (pdf.size > 0 && data.length > 0) {
     content = `${data} ${await PDFReader(formData)}`;
@@ -53,11 +51,11 @@ export const sendMessage = async (formData: FormData) => {
     }
     const result = await response.json();
 
- // Insert the AI response into history
- await insertIntoHistory('ai', result.result);
-    console.log("send req")
+    // Insert the AI response into history
+    await insertIntoHistory("ai", result.result);
+    console.log("send req");
 
-  revalidatePath('/');
+    revalidatePath("/");
 
     return result.result;
   } catch (error: any) {
@@ -68,5 +66,4 @@ export const sendMessage = async (formData: FormData) => {
     });
     throw error;
   }
-
 };
