@@ -1,5 +1,6 @@
 import Content from "./Content";
 import { fetchHistory } from "../seed/seedDB";
+import React from "react";
 
 const data = await fetchHistory();
 

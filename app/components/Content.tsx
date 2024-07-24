@@ -4,6 +4,7 @@ import { sendMessage } from "../actions/sendMessage";
 import TypingEffect from "./TypingEffect";
 import { useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
+import React from "react";
 
 
 interface Message {
