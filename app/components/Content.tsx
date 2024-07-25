@@ -16,10 +16,12 @@ export default function Content({ctx} : {ctx : Message[]}) {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const inputRefFile = useRef<HTMLInputElement>(null);
+
   const [file, setFile] = useState<File>();
   const [url, setURL] = useState<string>();
   const [history, setHistory] = useState<Message[]>(ctx);
   const[error,setError] = useState(false)
+
   const handleSubmit = async (formData: FormData) => {
     const data = formData.get("text") as string;
     const pdf = formData.get("file") as File;
@@ -35,6 +37,7 @@ export default function Content({ctx} : {ctx : Message[]}) {
 
 
     if (pdf.name.length && data.length > 0) {
+
       const file: Message = {
         type: "file",
         content: url as string,
@@ -46,6 +49,8 @@ export default function Content({ctx} : {ctx : Message[]}) {
       };
 
       setHistory((prev) => [...prev, file, text]);
+      formData.append("type", file.type);
+
     } else if (pdf.name.length) {
       const file: Message = {
         type: "file",
@@ -85,7 +90,7 @@ export default function Content({ctx} : {ctx : Message[]}) {
   const handler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]; 
 
-    setFile(selectedFile);
+    // setFile(selectedFile);
 
     if (url) {
       URL.revokeObjectURL(url);
@@ -127,7 +132,6 @@ export default function Content({ctx} : {ctx : Message[]}) {
                       <h2 className="font-bold">🤷🏼‍♂️</h2>
                       <br/>
                       <TypingEffect text={content} />
-                      {/* {content} */}
                     </div>
                   );
                 } else if (type === "ai") {
@@ -139,7 +143,6 @@ export default function Content({ctx} : {ctx : Message[]}) {
                       <h2 className="font-bold">🤖</h2>
                       <br/>
                       <TypingEffect text={content} />
-                      {/* {content} */}
                     </div>
                   );
                 }

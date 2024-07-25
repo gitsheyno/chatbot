@@ -11,6 +11,9 @@ async function getClient() {
 }
 
 export async function insertIntoHistory(type: string, content: string) {
+
+
+    console.log("content in db query func",content,type)
   const client = await getClient();
   try {
     const result = await client.sql`
@@ -18,7 +21,7 @@ export async function insertIntoHistory(type: string, content: string) {
       VALUES (${type}, ${content})
       RETURNING id
     `;
-    return result.rows[0].id;
+    return fetchHistory();
   } finally {
     client.release();
   }

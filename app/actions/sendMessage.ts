@@ -1,24 +1,30 @@
 "use server";
 import { PDFReader } from "./PDFReader";
-import { insertIntoHistory } from "../seed/seedDB";
+import { insertIntoHistory,fetchHistory } from "../seed/seedDB";
 import { revalidatePath } from "next/cache";
+interface Message {
+  type: string;
+  content: string;
+}
 
 export const sendMessage = async (formData: FormData) => {
   const data = formData.get("text") as string;
   const type = formData.get("type") as string;
   const pdf = formData.get("file") as File;
 
-  let content = "";
+  let content : string | Message[] = "" ;
 
   if (pdf.size > 0 && data.length > 0) {
     content = `${data} ${await PDFReader(formData)}`;
+    await insertIntoHistory(type, content)
   } else if (pdf.size > 0) {
     content = await PDFReader(formData);
+    await insertIntoHistory(type, content)
   } else if (data) {
-    content = data;
+    content = await insertIntoHistory(type, content);
   }
-  // Insert the initial message into history
-  await insertIntoHistory(type, content);
+
+
 
   const url = "https://chatgpt-42.p.rapidapi.com/conversationgpt4-2";
   const options = {
@@ -53,7 +59,6 @@ export const sendMessage = async (formData: FormData) => {
 
     // Insert the AI response into history
     await insertIntoHistory("ai", result.result);
-    console.log("send req");
 
     revalidatePath("/");
 
