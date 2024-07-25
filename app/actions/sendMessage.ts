@@ -21,7 +21,8 @@ export const sendMessage = async (formData: FormData) => {
     content = await PDFReader(formData);
     await insertIntoHistory(type, content)
   } else if (data) {
-    content = await insertIntoHistory(type, content);
+   content  = await insertIntoHistory(type, data);
+  
   }
 
 
