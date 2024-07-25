@@ -5,6 +5,8 @@ import React from "react";
 import { revalidatePath } from "next/cache";
 const data = await fetchHistory();
 
+export const dynamic = 'force-dynamic';
+
 export default function Main() {
 
   revalidatePath("/")
